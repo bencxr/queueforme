@@ -2,8 +2,15 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
+<script type="text/javascript" src="//sslstatic.wix.com/services/js-sdk/1.17.0/js/Wix.js"></script>
+
 <script type="text/javascript" src="//use.typekit.net/vid1sqp.js"></script>
 <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+<script type="text/javascript" src="https://raw.github.com/padolsey/prettyPrint.js/master/prettyprint.js"></script>
 
 <style>
 
@@ -45,7 +52,7 @@
   @media screen and (orientation:landscape) {
     .footer {
       position: relative;
-      margin-top: 20px;
+      margin-top: 5%;
     }
   }
 
@@ -175,18 +182,24 @@
   
   .media div {
     background-repeat: no-repeat;
-    background-size: 40px;
+    background-size: 35px;
     background-position: 5px;
     display: inline-block;
     line-height: 110%;
-    margin: 5px;
+    margin: 2px;
+    font-weight: bold;
+    font-size: 90%;
     border: 1px solid #aaa;
     border-radius: 4px;
     padding: 5px 5px 5px 50px;
   }
   
   .facebook {
-    background-image: url(http://www2.myacpa.org/images/stories/Facebook-icon.png);
+    background-image: url(http://queuefor.me/img/facebook-icon.png);
+  }
+  
+  .yelp {
+    background-image: url(http://queuefor.me/img/yelp-icon.png);
   }
   
   .thank {
@@ -204,13 +217,13 @@
   
   .setup span.name, .setup span.seats {
     display: inline-block;
-    margin: 5px;
+    margin: 1%;
     width: 25%;
     margin-left: 10px;
   }
   
   .labels {
-    margin: 3%;
+    margin: 1%;
   }
   
   .labels input {
@@ -225,22 +238,34 @@
   
   .enqueue, .update {
     position: relative;
-    border: 1px solid #aaa;
-    color: white;
-    background: black;
-    font-weight: 600;
     border-radius: 5px;
     padding: 8px;
     cursor: pointer;
-    width: 125px;
+    width: 120px;
     text-align: center;
-    margin: auto;
+    margin: 15px auto;
+    vertical-align: middle;
+    
+    background-repeat: no-repeat;
+    background-size: 40px;
+    background-position: 5px;
+    line-height: 110%;
+    border: 1px solid #aaa;
+    padding: 15px 5px 15px 50px;
+  }
+  
+  .enqueue {
+    background-image: url(http://queuefor.me/img/queue-icon.png);
+  }
+ 
+  .update {
+    background-image: url(http://queuefor.me/img/tick-icon.png);
   }
  
  
   /* Shroud */
   .shroud {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
@@ -276,6 +301,7 @@
     <div class="estimate"><span class="estimate">0</span> minute<span class="estimatePlural">s</span> approximate wait.<br/></div>
     <div class="media">
       <div class="facebook">Check in on<br>Facebook!</div>
+      <div class="yelp">Check in<br>on Yelp!</div>
     </div>
     <div class="footer">
       <div class="button" onclick="edit()"><div class="buttonIcon edit"></div><div class="buttonText">Edit</div></div><div class="button" onclick="cancel()"><div class="buttonIcon cancel"></div><div class="buttonText">Cancel</div></div>
@@ -325,7 +351,9 @@
 
 <script>
 
-  var merchant = <?php echo $merchant_json; ?>; 
+  var merchant = <?php echo $merchantJson; ?>; 
+  var merchantLocation = <?php echo $merchantLocationJson; ?>;
+  var state;
   var qid = readCookie('qid');
   var mid = readCookie('mid');
   var periodicPoll;
@@ -405,6 +433,14 @@
       for (var i = 0, label; label = labels[i]; i++) {
         labelsElement.appendChild(makeLabel(label));
       }
+      
+      if (!merchant.yelpaddress || merchant.yelpaddress == '') {
+        document.querySelector('.yelp').style.display = 'none';
+      } else {
+        document.querySelector('.yelp').onclick = bind(function(address) {
+          window.open(address);
+        }, null, merchant.yelpaddress);
+      }
     }
     
     if (qid) {
@@ -453,6 +489,8 @@
   
   function poll() {
     sendXhr('poll', function(data) {
+      state = data;
+    
       document.querySelector('div.seats span.seats').innerHTML = data.Queue.seats;
       document.querySelector('div.position span.position').innerHTML = data.Queue.position;
       if (data.Queue.position == 1) {
@@ -478,6 +516,12 @@
           document.querySelector('input[type="radio"][value="' + label + '"]').checked = true;
         }
         initialized = true;
+      }
+      
+      if (data.Queue.completedcheckins.indexOf('facebook') != -1) {
+        document.querySelector('.facebook').style.backgroundImage = 'url(http://queuefor.me/img/tick-icon.png)';
+        document.querySelector('.facebook').innerHTML = 'Checked in<br/>on Facebook';
+        document.querySelector('.facebook').onclick = null;
       }
       
       var nextPoll = 500;
@@ -547,104 +591,59 @@
 <!-- <iframe src="q4me://<?php echo $merchantID; ?>" width=0; height=0></iframe> -->
 
 <div id="fb-root"></div>
-        <script type="text/javascript">
-            var button;
-            var userInfo;
-            
-            window.fbAsyncInit = function() {
-                FB.init({ appId: '481273731946284', //change the appId to your appId
-                    status: true, 
-                    cookie: true,
-                    xfbml: true,
-                    oauth: true});
 
-               
-               function updateButton(response) {
-                    button       =   document.querySelector('.media');
-                    
-                    //user is not connected to your app or logged out
-                    button.onclick = function() {
-                        FB.login(function(response) {
-                            if (response.authResponse) {
-                                FB.api('/me', function(info) {
-                                    login(response, info);
-                                });	   
-                            }
-                        }, {scope:'publish_stream'});  	//{scope:'email,user_birthday,status_update,publish_stream,user_about_me'}
-                    }
-                }
-                
-                // run once with current status and whenever the status changes
-                FB.getLoginStatus(updateButton);
-                FB.Event.subscribe('auth.statusChange', updateButton);	
-            };
-            (function() {
-                var e = document.createElement('script'); e.async = true;
-                e.src = document.location.protocol 
-                    + '//connect.facebook.net/en_US/all.js';
-                document.getElementById('fb-root').appendChild(e);
-            }());
-            
-            
-            function login(response, info){
-                if (response.authResponse) {
-                    var accessToken                                 =   response.authResponse.accessToken;
-                    
-                    
-                    
-                    FB.api('/me/checkins', 'post', 
-    { message: 'MESSAGE_HERE',
-       place: 165122993538708,
-       coordinates: {
-           'latitude': 1.3019399200902,
-           'longitude': 103.84067653695
-       }
-    },
-        function (response) {
-            if (!response || response.error) {
-                            alert('Error occured' + response.error);
-                        } else {
-                            alert('Post ID: ' + response.id);
-                        }
+<script type="text/javascript">
+  window.fbAsyncInit = function() {
+    FB.init({appId: '481273731946284', status: true, cookie: true, xfbml: true, oauth: true});
+
+    document.querySelector('.facebook').onclick = function() {
+      FB.login(function(response) {
+        if (response.authResponse) {
+          prepare(response);
         }
-    );
-    /*
-                    
-                    FB.api('/me/feed', 'post', 
-                    { 
-                        message     : "blah",
-                        link        : 'http://queuefor.me',
-                        picture     : '',
-                        name        : 'queuefor.me',
-                        description : 'Test'
-                        
-                    }, 
-                    function(response) {
-                        
-                        if (!response || response.error) {
-                            alert('Error occured');
-                        } else {
-                            alert('Post ID: ' + response.id);
-                        }
-                    });*/
-                }
-            }
-        
-            function fqlQuery(){
-                
-                FB.api('/me', function(response) {
-                    
-                    //http://developers.facebook.com/docs/reference/fql/user/
-                    var query       =  FB.Data.query('select name, profile_url, sex, pic_small from user where uid={0}', response.id);
-                    query.wait(function(rows) {
-                       document.getElementById('debug').innerHTML =  
-                         'FQL Information: '+  "<br />" + 
-                         'Your name: '      +  rows[0].name                                                            + "<br />" +
-                         'Your Sex: '       +  (rows[0].sex!= undefined ? rows[0].sex : "")                            + "<br />" +
-                         'Your Profile: '   +  "<a href='" + rows[0].profile_url + "'>" + rows[0].profile_url + "</a>" + "<br />" +
-                         '<img src="'       +  rows[0].pic_small + '" alt="" />' + "<br />";
-                     });
-                });
-            }
-        </script>
+      }, {scope: 'publish_stream, publish_checkins'});  	//{scope:'email,user_birthday,status_update,publish_stream,user_about_me'}
+    }
+  };
+  
+  (function() {
+    var e = document.createElement('script'); e.async = true;
+    e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+    document.getElementById('fb-root').appendChild(e);
+  }());
+
+  function prepare(response){
+    if (response.authResponse) {
+      var accessToken = response.authResponse.accessToken;
+      var fbid = merchant.facebookid;
+      if (fbid == 0) {
+        var query = FB.Data.query('SELECT page_id FROM place WHERE distance(latitude, longitude, "' + merchantLocation.lat + '", "' + merchantLocation.lng + '") < 250');
+        query.wait(function(resp) {
+          if (resp.length > 0) {
+            checkin(resp[0].page_id);
+          } else {
+            alert('Unable to check in on Facebook.');
+          }
+        });
+      } else {
+        checkin(fbid);
+      }
+    }
+  }
+
+  function checkin(page_id) {
+    FB.api('/me/feed', 'post', { 
+      message: 'Waiting for some awesome food',
+      place: page_id,
+    }, function(response) {
+      if (!response || response.error) {
+        alert('Unable to check in on Facebook.');
+      } else {
+        document.querySelector('.facebook').style.backgroundImage = 'url(http://queuefor.me/img/tick-icon.png)';
+        document.querySelector('.facebook').innerHTML = 'Checked in<br/>on Facebook';
+        document.querySelector('.facebook').onclick = null;
+        sendXhr('update_checkins', null, {queueID: qid, completedcheckins: 'facebook'});
+      }
+    });
+  }
+</script>
 </html>

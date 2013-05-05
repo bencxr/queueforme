@@ -623,6 +623,9 @@
     for (var i = 0, labelElement; labelElement = labelElements[i]; i++) {
       labelElement.checked = ~options.indexOf(labelElement.value);
     }
+    if (customer.Queue.options == ';' || customer.Queue.options == '') {
+      document.querySelector('.shroud .labels input[value="None"]').checked = true;
+    }
   
     document.querySelector('.update').onclick = bind(update, this);
     document.querySelector('.abort').onclick = bind(abort, this);

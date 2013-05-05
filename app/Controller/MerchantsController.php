@@ -11,7 +11,46 @@ class MerchantsController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('queuefront', 'info', 'qrcode');
+        $this->Auth->allow('queuefront', 'info', 'qrcode', 'settings', 'wix', 'associatewix');
+    }
+
+    public function settings() {
+
+        $this->layout = 'wix';
+    }
+    
+    public function wix() {
+
+        $this->layout = 'wix';
+        $merchant = $this->Merchant->find('first', array('conditions' => array('Merchant.wixid' => $_GET["compId"]), 'recursive' => 0));
+
+        if (empty($merchant)) {
+            echo "Please set up your shortname in the app settings!";
+            exit;
+        }
+        $this->redirect("http://queuefor.me/".$merchant["Merchant"]["shortname"]);
+    }
+
+    public function associatewix() {
+
+
+        $params = $this->request->params['named'];
+        $shortname = $params['shortname']; 
+
+        $wixid = $params['compId'];
+
+        $merchant = $this->Merchant->find('first', array('conditions' => array('Merchant.shortname' => $shortname), 'recursive' => 0));
+        $merchant["Merchant"]["wixid"] = $wixid;
+        unset($merchant["Merchant"]["imageurl"]);
+
+        if ($this->Merchant->save($merchant)) {
+            $output["Success"] = 200;
+        } else {
+             $output["Error"] = "Could not save merchant";
+        }
+        
+        $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json');
+        $this->response->type('json');
     }
 
     public function qrcode() {
@@ -38,7 +77,6 @@ class MerchantsController extends AppController {
             	$output["Error"] = "merchantID was invalid or not found. "; $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json'); return; 
             }
 
-        $this->response->type('json');
     }
 
     public function info($shortname = null) {
@@ -95,6 +133,7 @@ class MerchantsController extends AppController {
         $merchantData["id"] = $merchant["Merchant"]["id"];
         $merchantData["name"] = $merchant["Merchant"]["name"];
         $merchantData["facebookid"] = $merchant["Merchant"]["facebookid"];
+        $merchantData["yelpaddress"] = $merchant["Merchant"]["yelpaddress"];
 
         $merchantData["imageurl"] = $merchant["Merchant"]["imageurl"];
 
@@ -107,7 +146,20 @@ class MerchantsController extends AppController {
         $merchantData["address"] = $merchant["Merchant"]["address"];
         $merchantData["website"] = $merchant["Merchant"]["website"];
         $merchantData["phonenumber"] = $merchant["Merchant"]["phonenumber"];
-        $this->set('merchant_json', json_encode($merchantData));
+        $address = str_replace("<br>", "", $merchantData["address"]);
+        $address = str_replace("<br/>", "", $address);
+        $gmapsgeocodeURL = "http://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&sensor=false";
+        $locationData = json_decode(file_get_contents($gmapsgeocodeURL));
+        $locationData = $locationData->results;
+
+        if (count($locationData) > 0) {
+            $locationData = $locationData[0]->geometry;
+            $merchantLocation = $locationData->location;
+        } else {
+            $merchantLocation = '{"lat":37.4035994,"lng":-122.009992}';
+        }
+        $this->set('merchantJson', json_encode($merchantData));
+        $this->set('merchantLocationJson', json_encode($merchantLocation));
         $this->set('merchantID', $merchantData["id"]);
         $this->layout = 'ajax';
     }

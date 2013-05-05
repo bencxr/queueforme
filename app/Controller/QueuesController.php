@@ -9,7 +9,7 @@ class QueuesController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('add', 'update', 'cancel', 'enqueue', 'merchant_add', 'login', 'logout', 'poll', 'ping', 'fulfill', 'qrcode', 'update_estimate'); 
+        $this->Auth->allow('add', 'update', 'cancel', 'enqueue', 'merchant_add', 'login', 'logout', 'poll', 'ping', 'fulfill', 'qrcode', 'update_estimate', 'update_checkins'); 
     }
 
     /**
@@ -263,6 +263,37 @@ class QueuesController extends AppController {
         $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json');  
     }
 
+    public function update_checkins() {
+        $params = $this->request->params['named'];
+
+        $queueID = $params["queueID"];
+        if (!isset($queueID)) {
+            $output["Error"] = "queueID not specified!";
+        }
+
+        $queue = $this->Queue->findById($queueID);
+
+        if (!isset($queue) || empty($queue)) {
+            $output["Error"] = "Could not find queue! "; $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json'); return; 
+        }
+
+        if (!isset($params["completedcheckins"])) { 
+            $output["Error"] = "'completedcheckins' parameter not provided. "; $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json'); return; 
+        }
+        $completedcheckins = $params["completedcheckins"];
+
+        $queue["Queue"]["completedcheckins"] = $completedcheckins;
+
+        if ($this->Queue->save($queue)) {
+            $output["Success"] = 200;
+        } else {
+             $output["Error"] = "Could not save queue";
+        }
+
+        $this->response->type('json');
+        $this->layout = 'ajax'; $this->set('content', $output); $this->render('/General/Json');
+    }
+
     public function fulfill() {
         $params = $this->request->params['named'];
 
@@ -462,6 +493,7 @@ class QueuesController extends AppController {
         $output["Queue"]["options"] = $queue["Queue"]["optiontags"];
         $output["Queue"]["cancelled"] = $queue["Queue"]["cancelled"] != '0000-00-00 00:00:00' ? $queue["Queue"]["cancelled"] : false;
         $output["Queue"]["created"] = $queue["Queue"]["created"];
+        $output["Queue"]["completedcheckins"] = $queue["Queue"]["completedcheckins"];
         $output["Queue"]["pinged"] = $queue["Queue"]["pinged"] != '0000-00-00 00:00:00' ? $queue["Queue"]["pinged"] : false;
         $output["Queue"]["firstpinged"] = $queue["Queue"]["firstpinged"] != '0000-00-00 00:00:00' ? $queue["Queue"]["firstpinged"] : false;
         $output["Queue"]["fulfilled"] = $queue["Queue"]["fulfilled"] != '0000-00-00 00:00:00' ? $queue["Queue"]["fulfilled"] : false;
@@ -481,6 +513,7 @@ class QueuesController extends AppController {
         $output = array();
         $output["id"] = $merchant["id"];
         $output["facebookid"] = $merchant["facebookid"];
+        $output["yelpaddress"] = $merchant["yelpaddress"];
         $output["name"] = $merchant["name"];
         $output["imageurl"] = $merchant["imageurl"];
         $output["options"] = $merchant["tableoptions"];
