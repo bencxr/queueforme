@@ -55,9 +55,9 @@
     background-position: center;
     background-image: url(http://queuefor.me/img/kitchenrestaurant.png);
     z-index: 100;
-    -moz-box-shadow: 0 0 25px 3px #999;
-    -webkit-box-shadow: 0 0 25px 3px #999;
-    box-shadow: 0 0 25px 3px #999;
+    -moz-box-shadow: 0 0 25px 3px #666;
+    -webkit-box-shadow: 0 0 25px 3px #666;
+    box-shadow: 0 0 25px 3px #666;
   }
   
   .restaurant div {
@@ -166,10 +166,11 @@
   
   .contents .pinged .time:before {
     display: inline-block;
-    width: 15px;
-    height: 15px;
-    padding-right: 5px;
+    width: 25px;
+    height: 25px;
+    padding-right: 8px;
     content: ' ';
+    vertical-align: text-bottom;
     background-image: url(http://queuefor.me/img/alarm-icon.png);
     background-size: contain;
     background-repeat: no-repeat;
@@ -180,6 +181,11 @@
     font-weight: bold;
     margin-left: 2%;
     float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 15%;
+    text-align: left;
   }
   
   .contents .input {
@@ -192,17 +198,30 @@
   
   .contents .button {
     display: inline-block;
-    width: 8%;
-    height: 26px;
+    margin-top: 0;
+    width: 10%;
+    height: 65px;
     float: right;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: left;
-    padding-left: 2%;
   }
   
   .contents .button + .button {
     border-right: 1px solid #ddd;
+  }
+  
+  .contents .buttonIcon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+  }
+  
+  .contents .buttonText {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
   }
   
   .contents .back {
@@ -229,8 +248,9 @@
     display: inline-block;
     float: right;
     margin-right: 2%;
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -240,19 +260,20 @@
     display: inline-block;
     float: right;
     margin-right: 2%;
-    width: 80px;
+    width: 120px;
+    text-align: right;
   }
   
   .contents .labels {
     display: inline-block;
     float: right;
     color: #666;
-    margin-right: 2%;
+    margin-right: 1%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: left;
-    width: 10%;
+    width: 7%;
   }
   
   .contents .seatsGroup {
@@ -278,18 +299,6 @@
     font-size: 12px;
   }
   
-  .contents .circle {
-    display: block;
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 0;
-    height: 0;
-    border: 20px solid black;
-    border-radius: 20px;
-    content: ' ';
-  }
-
   .contents .estimate {
     display: block;
     margin-top: 15px;
@@ -485,6 +494,23 @@
     return new Date (a[0], a[1]-1, a[2], a[3], a[4], a[5]);
   }
   
+  function createButton(text, classname, callback) {
+    var button = document.createElement('div');
+    button.className = 'button';
+    button.onclick = callback;
+    
+    var buttonIcon = document.createElement('div');
+    buttonIcon.className = 'buttonIcon ' + classname;
+    button.appendChild(buttonIcon);
+    
+    var buttonText = document.createElement('div');
+    buttonText.className = 'buttonText';
+    buttonText.innerHTML = text;
+    button.appendChild(buttonText);
+    
+    return button;
+  }
+  
   function createCustomer(queueElement) {
     customerElement = document.createElement('div');
     customerElement.className = 'customer';
@@ -506,35 +532,11 @@
     nameElement.className = 'name';
     customerElement.appendChild(nameElement);
     
-    var cancelElement = document.createElement('div');
-    cancelElement.innerHTML = 'Cancel';
-    cancelElement.className = 'button cancel';
-    cancelElement.onclick = bind(cancel, customerElement);
-    customerElement.appendChild(cancelElement);
-    
-    var editElement = document.createElement('div');
-    editElement.innerHTML = 'Edit';
-    editElement.className = 'button edit';
-    editElement.onclick = bind(edit, customerElement);
-    customerElement.appendChild(editElement);
-    
-    var fillElement = document.createElement('div');
-    fillElement.innerHTML = 'Done';
-    fillElement.className = 'button fill';
-    fillElement.onclick = bind(fill, customerElement);
-    customerElement.appendChild(fillElement);
-    
-    var pingElement = document.createElement('div');
-    pingElement.innerHTML = 'Alert';
-    pingElement.className = 'button ping';
-    pingElement.onclick = bind(ping, customerElement);
-    customerElement.appendChild(pingElement);
-    
-    var backElement = document.createElement('div');
-    backElement.innerHTML = 'Back';
-    backElement.className = 'button back'
-    backElement.onclick = bind(back, customerElement);
-    customerElement.appendChild(backElement);
+    customerElement.appendChild(createButton('Cancel', 'cancel', bind(cancel, customerElement)));
+    customerElement.appendChild(createButton('Edit', 'edit', bind(edit, customerElement)));
+    customerElement.appendChild(createButton('Done', 'fill', bind(fill, customerElement)));
+    customerElement.appendChild(createButton('Page', 'ping', bind(ping, customerElement)));
+    customerElement.appendChild(createButton('Back', 'back', bind(back, customerElement)));
     
     var specialElement = document.createElement('div');
     specialElement.className = 'special ping';

@@ -1,3 +1,5 @@
+<html xmlns:fb="https://www.facebook.com/2008/fbml">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 <script type="text/javascript" src="//use.typekit.net/vid1sqp.js"></script>
@@ -5,13 +7,39 @@
 
 <style>
 
+  @media only screen 
+  and (min-device-width : 320px) 
+  and (max-device-width : 568px) {
+    body {
+      font-size: 20px;
+      line-height: 30px;
+    }
+  }
+
+  @media only screen 
+  and (min-device-width : 568px) {
+    body {
+      font-size: 30px;
+      line-height: 45px;
+    }
+  }
+  
   .footer {
     position: absolute;
     text-align: center;
     white-space: nowrap;
     width: 100%;
     bottom: 0;
-    padding-bottom: 5px;
+    padding: 2% 0;
+    border-top: 1px solid #ddd;
+  }
+  
+  .queued .seats, .setup .name {
+    margin-top: 5%;
+  }
+  
+  .queued .seats, .queued .position, .queued .estimate, .setup .name, .setup .seats, .setup .labels {
+    margin-left: 3%;
   }
 
   @media screen and (orientation:landscape) {
@@ -24,11 +52,10 @@
   body {
     font-family: "faricy-new-web", helvetica;
     font-weight: 300;
-    font-size: 20px;
-    line-height: 30px;
     width: 100%;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
   }
 
   .setup, .queued, span.bar, span.bbq, span.patio, .enqueue, .update, .thank {
@@ -40,19 +67,21 @@
   .restaurant {
     display: block;
     width: 100%;
-    min-height: 60px;
-    max-height: 90px;
+    height: 25%;
     overflow: hidden;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    margin-bottom: 5px;
+    margin-bottom: 3%;
     border-bottom: 1px solid black;
-    line-height: 27px;
+    line-height: 90%;
+    -moz-box-shadow: 0 0 25px 3px #666;
+    -webkit-box-shadow: 0 0 25px 3px #666;
+    box-shadow: 0 0 25px 3px #666;
   }
   
   .restaurant div {
-    padding: 5px;
+    padding: 3%;
     font-weight: 600;
     /*
     text-shadow: -1px -1px 0 white,   
@@ -66,18 +95,19 @@
   }
   
   .restaurant .name {
-    font-size: 24px;
+    font-size: 120%;
   }
   
   .restaurant .address {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 90%;
+    line-height: 110%;
   }
   
   
   /* Queued */
   div.seats span.seats, div.position span.position, div.estimate span.estimate {
-    font-size: 22px;
+    font-size: 110%;
+    text-decoration: blink;
   }
   
   div.seats, div.position, div.estimate {
@@ -89,46 +119,52 @@
   }
   
   div.seats {
-    background-image: url(http://icons.iconarchive.com/icons/aha-soft/people/256/people-icon.png);
+    background-image: url(http://queuefor.me/img/table-icon.png);
   }
   
   div.position {
-    background-image: url(http://thumb18.shutterstock.com/thumb_large/97840/97840,1312233524,8/stock-photo-queue-82390702.jpg);
+    background-image: url(http://queuefor.me/img/queue-icon.png);
   }
   
   div.estimate {
-    background-image: url(http://logolitic.com/wp-content/uploads/2009/09/clock.png);
+    background-image: url(http://queuefor.me/img/clock-icon.png);
   }
   
   /* Buttons */
-  .footer div + div {
+  .footer div.button + div.button {
     border-left: 1px solid #ddd;
     margin-left: -1px;
   }
   
   .button {
-    width: 25%;
+    width: 50%;
     height: 40px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
     display: inline-block;
   }
   
+  .buttonIcon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    vertical-align: middle;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .buttonText {
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+  
   .cancel {
-    background-image: url(http://png-3.findicons.com/files/icons/75/i_like_buttons_3a/512/cute_ball_stop.png);
+    background-image: url(http://queuefor.me/img/cross-icon.png);
   }
   
   .edit {
-    background-image: url(http://www.psdgraphics.com/wp-content/uploads/2010/09/pencil-icon.jpg);
-  }
-  
-  .menu {
-    background-image: url(http://www.e-zign.com/portfolio_assets/pf-icon-menus.jpg);
-  }
-  
-  .map {
-    background-image: url(http://www.veryicon.com/icon/png/System/Palm/Google%20Maps.png);
+    background-image: url(http://queuefor.me/img/edit-icon.png);
   }
   
   /* Facebook */
@@ -142,7 +178,7 @@
     background-size: 40px;
     background-position: 5px;
     display: inline-block;
-    line-height: 22px;
+    line-height: 110%;
     margin: 5px;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -160,15 +196,21 @@
   
   
   /* Setup */
+  .setup {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
   .setup span.name, .setup span.seats {
     display: inline-block;
     margin: 5px;
-    width: 65px;
+    width: 25%;
     margin-left: 10px;
   }
   
   .labels {
-    margin: 10px;
+    margin: 3%;
   }
   
   .labels input {
@@ -177,15 +219,22 @@
   
   input.text, select {
     height: 30px;
-    width: 75px;
+    width: 60%;
     vertical-align: text-bottom;
   }
   
   .enqueue, .update {
+    position: relative;
     border: 1px solid #aaa;
+    color: white;
+    background: black;
+    font-weight: 600;
     border-radius: 5px;
-    padding: 5px;
+    padding: 8px;
     cursor: pointer;
+    width: 125px;
+    text-align: center;
+    margin: auto;
   }
  
  
@@ -218,20 +267,18 @@
       <option value="8">8</option>
     </select><br/>
     <div class="labels"></div>
-    <div class="footer">
-      <span class="enqueue" onclick="enqueue()">Queue Now!</span>
-      <span class="update" onclick="update()">Update</span>
-    </div>
+    <div class="enqueue" onclick="enqueue()">Queue Now!</div>
+    <div class="update" onclick="update()">Update</div>
   </div>
   <div class="queued">
     <div class="seats"><span class="seats">0</span> in your party<span class="label"></span>.<br/></div>
-    <div class="position"><span class="position">0</span> parties ahead of you.<br/></div>
-    <div class="estimate"><span class="estimate">0</span> minutes approximate wait.<br/></div>
+    <div class="position"><span class="position">0</span> part<span class="positionPlural">ies</span><span class="positionSingular">y</span> ahead of you.<br/></div>
+    <div class="estimate"><span class="estimate">0</span> minute<span class="estimatePlural">s</span> approximate wait.<br/></div>
     <div class="media">
       <div class="facebook">Check in on<br>Facebook!</div>
     </div>
     <div class="footer">
-      <div class="button cancel" onclick="cancel()"></div><div class="button edit" onclick="edit()"></div><div class="button menu"></div><div class="button map"></div>
+      <div class="button" onclick="edit()"><div class="buttonIcon edit"></div><div class="buttonText">Edit</div></div><div class="button" onclick="cancel()"><div class="buttonIcon cancel"></div><div class="buttonText">Cancel</div></div>
     </div>
   </div>
   <div class="thank">
@@ -365,7 +412,7 @@
       clearTimeout(periodicPoll);
       periodicPoll = setTimeout(poll, 500);
     } else {
-      document.querySelector('.enqueue').style.display = 'inline-block';
+      document.querySelector('.enqueue').style.display = 'block';
       document.querySelector('.setup').style.display = 'block';
     }
   }
@@ -408,7 +455,19 @@
     sendXhr('poll', function(data) {
       document.querySelector('div.seats span.seats').innerHTML = data.Queue.seats;
       document.querySelector('div.position span.position').innerHTML = data.Queue.position;
+      if (data.Queue.position == 1) {
+        document.querySelector('div.position span.positionSingular').style.display = 'inline';
+        document.querySelector('div.position span.positionPlural').style.display = 'none';
+      } else {
+        document.querySelector('div.position span.positionSingular').style.display = 'none';
+        document.querySelector('div.position span.positionPlural').style.display = 'inline';
+      }
       document.querySelector('div.estimate span.estimate').innerHTML = Math.round(parseInt(data.Queue.estimatedwaitsecs) / 60);
+      if (Math.round(parseInt(data.Queue.estimatedwaitsecs) / 60) == 1) {
+        document.querySelector('div.estimate span.estimatePlural').style.display = 'none';
+      } else {
+        document.querySelector('div.estimate span.estimatePlural').style.display = 'inline';
+      }
       document.querySelector('.label').innerHTML = data.Queue.options == '' ? '' : ' for ' + data.Queue.options.replace(/;$/, '').replace(/;/g, ', ');
       
       if (!initialized) {
@@ -469,8 +528,9 @@
     Array.prototype.slice.call(document.querySelectorAll('.setup, .queued, .enqueue, .update, .thank')).forEach(function(element) {
       element.style.display = 'none';
     });
-    document.querySelector('.update').style.display = 'inline-block';
+    document.querySelector('.update').style.display = 'block';
     document.querySelector('.setup').style.display = 'block';
+    document.querySelector('.setup .seats').focus();
   }
   
   function update() {
@@ -484,3 +544,107 @@
   init();
   
 </script>
+<!-- <iframe src="q4me://<?php echo $merchantID; ?>" width=0; height=0></iframe> -->
+
+<div id="fb-root"></div>
+        <script type="text/javascript">
+            var button;
+            var userInfo;
+            
+            window.fbAsyncInit = function() {
+                FB.init({ appId: '481273731946284', //change the appId to your appId
+                    status: true, 
+                    cookie: true,
+                    xfbml: true,
+                    oauth: true});
+
+               
+               function updateButton(response) {
+                    button       =   document.querySelector('.media');
+                    
+                    //user is not connected to your app or logged out
+                    button.onclick = function() {
+                        FB.login(function(response) {
+                            if (response.authResponse) {
+                                FB.api('/me', function(info) {
+                                    login(response, info);
+                                });	   
+                            }
+                        }, {scope:'publish_stream'});  	//{scope:'email,user_birthday,status_update,publish_stream,user_about_me'}
+                    }
+                }
+                
+                // run once with current status and whenever the status changes
+                FB.getLoginStatus(updateButton);
+                FB.Event.subscribe('auth.statusChange', updateButton);	
+            };
+            (function() {
+                var e = document.createElement('script'); e.async = true;
+                e.src = document.location.protocol 
+                    + '//connect.facebook.net/en_US/all.js';
+                document.getElementById('fb-root').appendChild(e);
+            }());
+            
+            
+            function login(response, info){
+                if (response.authResponse) {
+                    var accessToken                                 =   response.authResponse.accessToken;
+                    
+                    
+                    
+                    FB.api('/me/checkins', 'post', 
+    { message: 'MESSAGE_HERE',
+       place: 165122993538708,
+       coordinates: {
+           'latitude': 1.3019399200902,
+           'longitude': 103.84067653695
+       }
+    },
+        function (response) {
+            if (!response || response.error) {
+                            alert('Error occured' + response.error);
+                        } else {
+                            alert('Post ID: ' + response.id);
+                        }
+        }
+    );
+    /*
+                    
+                    FB.api('/me/feed', 'post', 
+                    { 
+                        message     : "blah",
+                        link        : 'http://queuefor.me',
+                        picture     : '',
+                        name        : 'queuefor.me',
+                        description : 'Test'
+                        
+                    }, 
+                    function(response) {
+                        
+                        if (!response || response.error) {
+                            alert('Error occured');
+                        } else {
+                            alert('Post ID: ' + response.id);
+                        }
+                    });*/
+                }
+            }
+        
+            function fqlQuery(){
+                
+                FB.api('/me', function(response) {
+                    
+                    //http://developers.facebook.com/docs/reference/fql/user/
+                    var query       =  FB.Data.query('select name, profile_url, sex, pic_small from user where uid={0}', response.id);
+                    query.wait(function(rows) {
+                       document.getElementById('debug').innerHTML =  
+                         'FQL Information: '+  "<br />" + 
+                         'Your name: '      +  rows[0].name                                                            + "<br />" +
+                         'Your Sex: '       +  (rows[0].sex!= undefined ? rows[0].sex : "")                            + "<br />" +
+                         'Your Profile: '   +  "<a href='" + rows[0].profile_url + "'>" + rows[0].profile_url + "</a>" + "<br />" +
+                         '<img src="'       +  rows[0].pic_small + '" alt="" />' + "<br />";
+                     });
+                });
+            }
+        </script>
+</html>

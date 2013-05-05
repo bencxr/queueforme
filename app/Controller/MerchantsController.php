@@ -108,6 +108,7 @@ class MerchantsController extends AppController {
         $merchantData["website"] = $merchant["Merchant"]["website"];
         $merchantData["phonenumber"] = $merchant["Merchant"]["phonenumber"];
         $this->set('merchant_json', json_encode($merchantData));
+        $this->set('merchantID', $merchantData["id"]);
         $this->layout = 'ajax';
     }
 
