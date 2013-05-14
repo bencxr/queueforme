@@ -28,7 +28,7 @@ class MerchantsController extends AppController {
             echo "Please set up your shortname in the app settings!";
             exit;
         }
-        $this->redirect("http://queuefor.me/".$merchant["Merchant"]["shortname"]);
+        $this->redirect("http://queuefor.me/".$merchant["Merchant"]["shortname"]."/?small=true");
     }
 
     public function associatewix() {

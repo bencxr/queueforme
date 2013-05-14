@@ -188,6 +188,14 @@
     text-align: left;
   }
   
+  .fbcheckedin {
+    padding-left: 32px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url(http://queuefor.me/img/facebook-icon.png);
+  }
+  
   .contents .input {
     width: 85px;
   }
@@ -447,6 +455,10 @@
       var nameElement = customerElement.querySelector('.name');
       nameElement.innerHTML = customer.User.fullname;
       
+      if (customer.Queue.completedcheckins.indexOf('facebook') != -1) {
+        nameElement.className = 'name fbcheckedin';
+      }
+    
       var seatsElement = customerElement.querySelector('.seats');
       seatsElement.innerHTML = customer.Queue.seats;
       

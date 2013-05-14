@@ -14,15 +14,12 @@
 
 <style>
 
-  @media only screen 
-  and (min-device-width : 320px) 
-  and (max-device-width : 568px) {
-    body {
-      font-size: 20px;
-      line-height: 30px;
-    }
+  body {
+    font-size: 20px;
+    line-height: 30px;
   }
 
+ <?php if (!isset($_GET["small"])) {  ?>
   @media only screen 
   and (min-device-width : 568px) {
     body {
@@ -30,6 +27,7 @@
       line-height: 45px;
     }
   }
+    <?php } ?>
   
   .footer {
     position: absolute;
@@ -536,7 +534,26 @@
       } else if (data.Queue.pinged && !data.Queue.fulfilled) {
         if (lastPing != data.Queue.pinged) {
           lastPing = data.Queue.pinged;
-          alert('A table is available for you!');
+          var snd = new Audio('http://www.soundjay.com/phone/sounds/telephone-ring-2.mp3');
+          var alerted = {alerted: false};
+          snd.addEventListener('playing', bind(function(snd, alerted) {
+            if (!alerted.alerted) {
+              alerted.alerted = true;
+              alert('A table is available for you!');
+              snd.pause();
+            }
+          }, null, snd, alerted));
+          snd.play();
+          if (window.navigator.vibrate) {
+            window.navigator.vibrate(2000);
+          }
+          window.setTimeout(bind(function() {
+            if (!alerted.alerted) {
+              alerted.alerted = true;
+              alert('A table is available for you!!');
+              snd.pause();
+            }
+          }, null, snd, alerted), 1000);
         }
         periodicPoll = setTimeout(poll, nextPoll);
       } else if (!data.Queue.fulfilled) {
